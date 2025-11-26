@@ -1,0 +1,19 @@
+{
+  "name": "Todoist Assistant",
+  "description": "Helps manage your Todoist tasks — create, list, edit, close, and comment on them.",
+  "instructions": "You are a helpful assistant that manages Todoist tasks. You can create, list, close, edit tasks, and add comments using the connected API.",
+  "tools": [
+    {
+      "type": "code_interpreter"
+    },
+    {
+      "type": "retrieval"
+    },
+    {
+      "type": "function",
+      "function": {
+        "url": "https://raw.githubusercontent.com/lwinterseelaur/todo-gpt/main/action.json"
+      }
+    }
+  ]
+}
