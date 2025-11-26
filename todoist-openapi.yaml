@@ -1,0 +1,192 @@
+openapi: 3.1.0
+info:
+  title: Todoist Task Management API
+  description: Interact with Todoist tasks — list, create, edit, complete, and comment on them.
+  version: 1.0.3
+servers:
+  - url: https://api.todoist.com/rest/v2
+    description: Todoist REST API server
+paths:
+  /tasks:
+    get:
+      operationId: listTasks
+      summary: List active tasks
+      description: Retrieves all active (uncompleted) tasks.
+      parameters:
+        - name: project_id
+          in: query
+          required: false
+          description: Filter by project ID
+          schema:
+            type: string
+        - name: label_id
+          in: query
+          required: false
+          description: Filter by label ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+    post:
+      operationId: createTask
+      summary: Create a new task
+      description: Adds a new task to the user's task list.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - content
+              properties:
+                content:
+                  type: string
+                  description: The task's content
+                description:
+                  type: string
+                due_string:
+                  type: string
+                  description: Human-readable due date (e.g., "tomorrow at 12:00")
+                priority:
+                  type: integer
+                  description: Priority from 1 (normal) to 4 (urgent)
+                project_id:
+                  type: string
+                section_id:
+                  type: string
+      responses:
+        '200':
+          description: Task created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+
+  /tasks/{task_id}/close:
+    post:
+      operationId: closeTask
+      summary: Close (complete) a task
+      description: Marks a task as completed.
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Task successfully closed
+
+  /tasks/{task_id}:
+    post:
+      operationId: updateTask
+      summary: Update (edit) a task
+      description: Updates specified fields of a task.
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                description:
+                  type: string
+                due_string:
+                  type: string
+                priority:
+                  type: integer
+                project_id:
+                  type: string
+                section_id:
+                  type: string
+      responses:
+        '204':
+          description: Task updated successfully
+
+  /comments:
+    post:
+      operationId: addComment
+      summary: Add a comment to a task
+      description: Adds a comment to a specific task.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - task_id
+                - content
+              properties:
+                task_id:
+                  type: string
+                  description: The ID of the task to comment on
+                content:
+                  type: string
+                  description: The text content of the comment
+      responses:
+        '200':
+          description: Comment added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Task:
+      type: object
+      properties:
+        id:
+          type: string
+        content:
+          type: string
+        description:
+          type: string
+        priority:
+          type: integer
+        due:
+          type: object
+          properties:
+            date:
+              type: string
+        project_id:
+          type: string
+        section_id:
+          type: string
+    Comment:
+      type: object
+      properties:
+        id:
+          type: string
+        content:
+          type: string
+        posted_at:
+          type: string
+          format: date-time
+        task_id:
+          type: string
+
+security:
+  - bearerAuth: []
