@@ -1,0 +1,10 @@
+{
+  "name": "todoistTasks",
+  "description": "Interact with the Todoist API to list, create, update, close tasks and add comments.",
+  "api": {
+    "type": "openapi",
+    "url": "https://raw.githubusercontent.com/lwinterseelaur/todo-gpt/main/todoist-openapi.yaml",
+    "has_user_auth": true,
+    "is_consequential": false
+  }
+}
